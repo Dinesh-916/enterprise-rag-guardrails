@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import Chroma
 from langchain_community.retrievers import BM25Retriever
 from langchain_classic.retrievers import EnsembleRetriever
@@ -21,8 +22,8 @@ class GradeOutput(BaseModel):
 
 class EnterpriseRAGPipeline:
     def __init__(self):
-        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-        self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+        self.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        self.llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
         self.reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
         self.vector_store = Chroma(
             collection_name="enterprise_docs",
@@ -73,7 +74,7 @@ class EnterpriseRAGPipeline:
 
         pairs = [[query, doc.page_content] for doc in candidates]
         scores = self.reranker.predict(pairs)
-        ranked = sorted(zip(scores, candidates), key=lambda x: x[0], reverse=True)
+        ranked = sorted(zip(scores, candidates), key=lambda x: x, reverse=True)
         return [doc for _, doc in ranked[:top_k]]
 
     def evaluate_faithfulness(self, context: str, answer: str) -> GradeOutput:
