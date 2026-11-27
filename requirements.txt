@@ -4,7 +4,8 @@ streamlit
 langchain
 langchain-classic
 langchain-community
-langchain-openai
+langchain-google-genai
+langchain-huggingface
 langchain-text-splitters
 chromadb
 rank-bm25
