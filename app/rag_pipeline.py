@@ -23,7 +23,8 @@ class GradeOutput(BaseModel):
 class EnterpriseRAGPipeline:
     def __init__(self):
         self.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-        self.llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+        self.llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite", temperature=0)
+
         self.reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
         self.vector_store = Chroma(
             collection_name="enterprise_docs",
